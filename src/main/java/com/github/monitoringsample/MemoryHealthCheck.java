@@ -17,8 +17,10 @@ public class MemoryHealthCheck extends HealthCheck {
      */
     @Override
     protected Result check() throws Exception {
+        //http://localhost:8080/monitoring-sample/metrics/healthcheck
         final long pctMem = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) * 100 / Runtime.getRuntime().totalMemory();
         return pctMem < 50 ? Result.healthy() : Result.unhealthy("Low Memory");
+        
     }
 
 }

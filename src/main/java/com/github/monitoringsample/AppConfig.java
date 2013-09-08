@@ -18,6 +18,7 @@ import com.codahale.metrics.JmxReporter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheck;
 import com.codahale.metrics.health.HealthCheckRegistry;
+import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
 
 /**
  * <p>AppConfig. </p>
@@ -37,43 +38,74 @@ public class AppConfig {
     @Inject
     private MonitoringResource monitoringResource;
 
+    /**
+     * healthCheckRegistry.
+     *
+     * @return
+     */
     @Bean
     public HealthCheckRegistry healthCheckRegistry() {
         final HealthCheckRegistry healthCheckRegistry = new HealthCheckRegistry();
         return healthCheckRegistry;
     }
 
-
+    /**
+     * metricRegistry.
+     *
+     * @return
+     */
     @Bean
     public MetricRegistry metricRegistry() {
         final MetricRegistry metricRegistry = new MetricRegistry();
+        metricRegistry.register("MemoryUsageGaugeSet", new MemoryUsageGaugeSet());
         return metricRegistry;
     }
-    
+
+    /**
+     * jmxReporter.
+     *
+     * @return
+     */
     @Bean
     public JmxReporter jmxReporter() {
-        final JmxReporter reporter = JmxReporter.forRegistry(metricRegistry()). build();
+        final JmxReporter reporter = JmxReporter.forRegistry(metricRegistry()).build();
+        
+        
         reporter.start();
         return reporter;
-        }
+    }
 
+    /**
+     * counter.
+     *
+     * @return
+     */
     @Bean
     public Counter counter() {
         return metricRegistry().counter("counter");
     }
 
+    /**
+     * histogram.
+     *
+     * @return
+     */
     @Bean
     public Histogram histogram() {
         return metricRegistry().histogram("histogram");
     }
-    
+
+    /**
+     * healthCheck.
+     *
+     * @return
+     */
     @Bean
     public HealthCheck healthCheck() {
         final HealthCheck healthCheck = new MemoryHealthCheck();
         healthCheckRegistry().register("mem", healthCheck);
         return healthCheck;
     }
-    
 
     /**
      * cxf.
@@ -100,7 +132,6 @@ public class AppConfig {
         jaxRSServerFactoryBean.setProvider(new JacksonJsonProvider());
         jaxRSServerFactoryBean.create();
         return jaxRSServerFactoryBean;
-
     }
 
 }

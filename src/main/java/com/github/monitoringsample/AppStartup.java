@@ -5,6 +5,7 @@ import java.io.File;
 
 import javax.servlet.ServletException;
 
+import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.mbeans.JmxRemoteLifecycleListener;
 import org.apache.catalina.startup.Tomcat;
@@ -81,8 +82,8 @@ public final class AppStartup {
             final Tomcat tomcat = new Tomcat();
             tomcat.setBaseDir("target");
             tomcat.setPort(8080);
-            tomcat.addWebapp(SLASH + APP_NAME, webappLocation);
-            
+            Context context = tomcat.addWebapp(SLASH + APP_NAME, webappLocation);
+ 
             
             tomcat.start();
             final long stopTime = System.currentTimeMillis();
